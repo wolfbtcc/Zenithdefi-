@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react';
 import type { User, Page, Financials, Operation, Withdrawal, InvestmentRescue } from './types';
 import LandingPage from './components/LandingPage';
@@ -484,8 +485,31 @@ const App: React.FC = () => {
   }, []);
   
   const navigateToAffiliate = useCallback(() => {
+    if (user) {
+        // Refresh affiliate data from localStorage before navigating
+        const allUserEmails = getStoredAllUserEmails();
+        const allUsers = allUserEmails
+            .map(email => getStoredUser(email))
+            .filter((u): u is User => u !== null);
+        
+        const myReferrals = allUsers.filter((u) => u.referredBy === user.email);
+        setReferredUsers(myReferrals);
+
+        // also refresh financials to get latest affiliate earnings
+        const { balance, totalInvested, affiliateEarnings } = getStoredFinancials(user.email);
+        const storedOperations = getStoredOperations(user.email);
+        const calculatedProfits = calculateProfits(storedOperations, user.registrationDate);
+
+        setFinancials({
+            balance,
+            totalInvested,
+            affiliateEarnings,
+            todayProfit: calculatedProfits.todayProfit,
+            monthProfit: calculatedProfits.monthProfit,
+        });
+    }
     setCurrentPage('affiliate');
-  }, []);
+  }, [user]);
 
   const navigateToDepositFlow = useCallback((type: 'usdt' | 'pix') => {
     setDepositType(type);

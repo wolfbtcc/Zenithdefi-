@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { User } from '../types';
 import Footer from './Footer';
-import { RocketIcon, ArrowLeftIcon } from './Icons';
+import { RocketIcon, ArrowLeftIcon, UserIcon, EmailIcon, LockIcon } from './Icons';
 
 interface AuthPageProps {
   onLogin: (user: User, referrerId: string | null) => void;
@@ -138,60 +138,75 @@ const AuthPage: React.FC<AuthPageProps> = ({ onLogin, initialMode, onNavigateBac
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
             {!isLogin && (
               <div className="animate-fade-in-up">
-                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">Nome Completo</label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="block w-full bg-black border border-gray-700 rounded-lg shadow-sm py-3 px-4 text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500 focus:border-orange-500"
-                />
+                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Nome Completo</label>
+                <div className="relative">
+                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="block w-full bg-[#2C2C2E] border border-gray-700/50 rounded-xl shadow-sm py-3 px-4 pl-12 text-base text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500"
+                  />
+                </div>
               </div>
             )}
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">Endereço de E-mail</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="block w-full bg-black border border-gray-700 rounded-lg shadow-sm py-3 px-4 text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500 focus:border-orange-500"
-              />
+              <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">E-mail</label>
+              <div className="relative">
+                <EmailIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="seu@email.com"
+                  className="block w-full bg-[#2C2C2E] border border-gray-700/50 rounded-xl shadow-sm py-3 px-4 pl-12 text-base text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500"
+                />
+              </div>
             </div>
             <div>
-              <label htmlFor="password"className="block text-sm font-medium text-gray-300 mb-1">Senha</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete={isLogin ? "current-password" : "new-password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="block w-full bg-black border border-gray-700 rounded-lg shadow-sm py-3 px-4 text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500 focus:border-orange-500"
-              />
+              <label htmlFor="password"className="block text-sm font-medium text-gray-300 mb-2">Senha</label>
+              <div className="relative">
+                <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete={isLogin ? "current-password" : "new-password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="••••••••"
+                  className="block w-full bg-[#2C2C2E] border border-gray-700/50 rounded-xl shadow-sm py-3 px-4 pl-12 text-base text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500"
+                />
+              </div>
               {!isLogin && <PasswordStrengthIndicator strength={passwordStrength} />}
             </div>
 
             {!isLogin && (
               <div className="animate-fade-in-up">
-                <label htmlFor="confirm-password"className="block text-sm font-medium text-gray-300 mb-1">Confirmar Senha</label>
-                <input
-                  id="confirm-password"
-                  name="confirm-password"
-                  type="password"
-                  autoComplete="new-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full bg-black border border-gray-700 rounded-lg shadow-sm py-3 px-4 text-base focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500 focus:border-orange-500"
-                />
+                <label htmlFor="confirm-password"className="block text-sm font-medium text-gray-300 mb-2">Confirmar Senha</label>
+                <div className="relative">
+                  <LockIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                  <input
+                    id="confirm-password"
+                    name="confirm-password"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="block w-full bg-[#2C2C2E] border border-gray-700/50 rounded-xl shadow-sm py-3 px-4 pl-12 text-base text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-black focus:ring-orange-500"
+                  />
+                </div>
               </div>
             )}
             

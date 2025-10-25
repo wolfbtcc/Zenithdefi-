@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import type { User, Financials, Operation } from '../types';
-import { ChartUpIcon, DollarIcon } from './Icons';
+import { ChartUpIcon, DollarIcon, SafeIcon } from './Icons';
 import Footer from './Footer';
 import OperationHistory from './OperationHistory';
 import ConnectWalletButton from './ConnectWalletButton';
@@ -21,18 +21,15 @@ interface StatCardProps {
     title: string;
     value: string;
     icon: React.ReactNode;
-    colorClass: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, icon, colorClass }) => (
-    <div className={`bg-black border ${colorClass}/20 rounded-2xl p-6 flex flex-col justify-between shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-${colorClass}/20`}>
-        <div>
-            <div className={`w-10 h-10 rounded-full bg-${colorClass}/10 flex items-center justify-center mb-4`}>
-                {icon}
-            </div>
-            <p className="text-gray-400 text-base">{title}</p>
-            <p className="text-3xl font-bold text-white mt-1">{value}</p>
+const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
+    <div className="bg-black border border-orange-500/50 rounded-xl p-4 flex flex-col justify-between shadow-[0_0_15px_rgba(255,106,0,0.3)] h-full transition-all duration-300 hover:scale-105 hover:border-orange-500 hover:shadow-[0_0_25px_rgba(255,106,0,0.5)]">
+        <div className="flex justify-between items-start">
+            <p className="text-gray-400 text-sm">{title}</p>
+            {icon}
         </div>
+        <p className="text-3xl font-bold text-white mt-2">{value}</p>
     </div>
 );
 
@@ -82,38 +79,31 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, financials, operati
       <main className="flex-grow container mx-auto px-4 py-8 z-10">
         <div className="mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-white">
-            {greetingText},
-          </h2>
-          <h2 className="text-3xl md:text-4xl font-bold text-white uppercase">
-            {user.name.split(' ')[0]}!
+            {greetingText}, {user.name} !
           </h2>
           <p className="text-gray-400 mt-2">Bem-vindo(a) de volta.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard 
-                title="Saldo Disponível (Lucro)"
+                title="Saldo Disponível"
                 value={formatCurrency(financials.balance - financials.totalInvested)}
                 icon={<DollarIcon className="w-6 h-6 text-green-400" />}
-                colorClass="border-green-500"
             />
             <StatCard 
                 title="Lucros de Hoje"
                 value={formatCurrency(financials.todayProfit)}
                 icon={<ChartUpIcon className="w-6 h-6 text-green-400" />}
-                colorClass="border-green-500"
             />
             <StatCard 
-                title="Lucro do Mês"
+                title="Lucros do Mês"
                 value={formatCurrency(financials.monthProfit)}
                 icon={<ChartUpIcon className="w-6 h-6 text-orange-400" />}
-                colorClass="border-orange-500"
             />
             <StatCard 
-                title="Total Investido"
+                title="Saldo Investido"
                 value={formatCurrency(financials.totalInvested)}
-                icon={<DollarIcon className="w-6 h-6 text-orange-400" />}
-                colorClass="border-orange-500"
+                icon={<SafeIcon className="w-6 h-6 text-blue-400" />}
             />
         </div>
 
