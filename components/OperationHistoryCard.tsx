@@ -6,7 +6,6 @@ interface OperationHistoryCardProps {
   operation: Operation;
 }
 
-const neonOrange = '#FF7A00';
 const neonGreen = '#2AF8A1';
 
 const formatCurrency = (value: number) => {
@@ -37,7 +36,7 @@ const OperationHistoryCard: React.FC<OperationHistoryCardProps> = ({ operation }
         <div className="flex justify-between items-start">
             <div>
                 <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Operação Cripto</p>
-                <h3 className="text-xl font-bold text-white mt-1">{operation.pair}</h3>
+                <h3 className="text-lg font-bold text-white mt-1">{operation.pair}</h3>
                 <p className="text-sm text-gray-500 mt-0.5">{operation.exchanges}</p>
             </div>
             <div className="flex items-center gap-1.5 text-base font-bold" style={{ color: neonGreen }}>
@@ -46,26 +45,15 @@ const OperationHistoryCard: React.FC<OperationHistoryCardProps> = ({ operation }
             </div>
         </div>
 
-        {/* Bottom Section with Accent */}
-        <div className="relative flex mt-4">
-            {/* Accent Line */}
-            <div className="w-4 flex-shrink-0 flex justify-center">
-                 <div className="relative w-px h-full bg-gradient-to-b from-orange-700 via-orange-800 to-transparent">
-                     <div className="absolute top-[20%] -left-px w-1.5 h-1.5 rounded-full" style={{backgroundColor: neonOrange}}></div>
-                     <div className="absolute top-[80%] -left-px w-1.5 h-1.5 rounded-full" style={{backgroundColor: neonOrange}}></div>
-                </div>
+        {/* Bottom Section - Compact */}
+        <div className="mt-4 pt-4 border-t border-gray-800/50 grid grid-cols-2 gap-4">
+            <div>
+                <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold">Lucro</p>
+                <p className="text-xl font-bold" style={{ color: neonGreen }}>{formatCurrency(operation.profit)}</p>
             </div>
-            
-            {/* Financial Details */}
-            <div className="flex-grow pl-2 space-y-4">
-                <div>
-                    <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold">Lucro</p>
-                    <p className="text-3xl font-extrabold" style={{ color: neonGreen }}>{formatCurrency(operation.profit)}</p>
-                </div>
-                <div>
-                    <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold">Retorno Total</p>
-                    <p className="text-2xl font-extrabold" style={{ color: neonGreen }}>{formatCurrency(operation.totalReturn)}</p>
-                </div>
+            <div>
+                <p className="text-sm text-gray-400 uppercase tracking-wider font-semibold">Retorno Total</p>
+                <p className="text-xl font-bold" style={{ color: neonGreen }}>{formatCurrency(operation.totalReturn)}</p>
             </div>
         </div>
         

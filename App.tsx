@@ -1,6 +1,4 @@
 
-
-
 import React, { useState, useCallback, useEffect } from 'react';
 import type { User, Page, Financials, Operation, Withdrawal, InvestmentRescue } from './types';
 import LandingPage from './components/LandingPage';

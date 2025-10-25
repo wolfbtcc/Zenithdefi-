@@ -155,75 +155,67 @@ const ArbitrageCard: React.FC<ArbitrageCardProps> = ({
   }
   
   return (
-    <div className="w-full max-w-sm sm:max-w-md mx-auto flex flex-col gap-4 text-white">
-        <div key={animationKey} className="bg-black border border-white/10 rounded-2xl p-5 animate-fade-in-up space-y-4">
-            {/* Header */}
-            <div className="flex justify-between items-center gap-4">
-                <div className="flex items-center gap-4">
-                    <div className="bg-[#3A2617] text-orange-400 p-3 rounded-xl">
-                        <RobotIcon className="w-7 h-7" />
-                    </div>
-                    <div>
-                        <h2 className="text-lg font-extrabold text-white">Zenith AI Analisando</h2>
-                        <p className="text-sm text-gray-400">
-                            Buscando oportunidade...
-                        </p>
-                    </div>
+    <div key={animationKey} className="w-full max-w-sm sm:max-w-md mx-auto flex flex-col gap-4 text-white animate-fade-in-up">
+        {/* Header */}
+        <div className="flex justify-between items-center gap-4">
+            <div className="flex items-center gap-4">
+                <div className="bg-[#3A2617] text-orange-400 p-3 rounded-xl">
+                    <RobotIcon className="w-7 h-7" />
                 </div>
-                <div className="flex flex-col items-center gap-1">
-                    <div className="w-16 h-12 flex items-center justify-center rounded-lg bg-black animate-pulse-heartbeat">
-                        <span className="text-xl font-bold text-orange-400">{countdown}s</span>
-                    </div>
-                    <p className="text-xs text-gray-500">Próxima</p>
+                <div>
+                    <h2 className="text-lg font-extrabold text-white">Zenith AI Analisando</h2>
+                    <p className="text-sm text-gray-400">
+                        Buscando oportunidade...
+                    </p>
                 </div>
             </div>
+        </div>
 
-            {/* Trading Pair Info */}
-            <div className="bg-black rounded-xl p-4 space-y-3 border border-gray-800">
-                <div className="flex justify-between items-center">
-                    <h3 className="text-xl font-semibold">{opportunity.pair}</h3>
-                    <div className="flex items-center gap-2 text-green-400 font-bold text-xl">
-                        <ChartUpIcon className="w-5 h-5" />
-                        + {opportunity.percentage.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
-                    </div>
-                </div>
-                <div className="flex items-center justify-between gap-2">
-                    <div className="text-center bg-[#3a2617] rounded-lg p-3 flex-1">
-                        <p className="text-xs text-gray-400">Compra em</p>
-                        <p className="font-bold text-orange-400 mt-1">{opportunity.buyExchange}</p>
-                    </div>
-                    <ExchangeIcon className="w-6 h-6 text-gray-500 flex-shrink-0" />
-                    <div className="text-center bg-[#103D37] rounded-lg p-3 flex-1">
-                        <p className="text-xs text-gray-400">Venda em</p>
-                        <p className="font-bold text-green-400 mt-1">{opportunity.sellExchange}</p>
-                    </div>
+        {/* Trading Pair Info */}
+        <div className="bg-black rounded-xl p-4 space-y-3 border border-gray-800">
+            <div className="flex justify-between items-center">
+                <h3 className="text-xl font-semibold">{opportunity.pair}</h3>
+                <div className="flex items-center gap-2 text-green-400 font-bold text-xl">
+                    <ChartUpIcon className="w-5 h-5" />
+                    + {opportunity.percentage.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%
                 </div>
             </div>
+            <div className="flex items-center justify-between gap-2">
+                <div className="text-center bg-[#103D37] rounded-lg p-3 flex-1">
+                    <p className="text-xs text-gray-400">Compra em</p>
+                    <p className="font-bold text-green-400 mt-1">{opportunity.buyExchange}</p>
+                </div>
+                <ExchangeIcon className="w-6 h-6 text-gray-500 flex-shrink-0" />
+                <div className="text-center bg-red-900/50 rounded-lg p-3 flex-1">
+                    <p className="text-xs text-gray-400">Venda em</p>
+                    <p className="font-bold text-red-400 mt-1">{opportunity.sellExchange}</p>
+                </div>
+            </div>
+        </div>
 
-             {/* Financials */}
-            <div className="bg-black rounded-xl p-4 text-sm space-y-3 border border-gray-800">
-                <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Valor do Investimento</p>
-                    <p className="font-semibold text-base">{formatCurrency(investmentValue)}</p>
-                </div>
-                <hr className="border-white/10" />
-                <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Lucro Bruto da Operação</p>
-                    <p className="font-semibold text-green-400">{formatCurrency(calculations.grossProfit)}</p>
-                </div>
-                <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Seu Lucro (70%)</p>
-                    <p className="font-semibold text-green-400">{formatCurrency(calculations.userProfit)}</p>
-                </div>
-                <div className="flex justify-between items-center">
-                    <p className="text-gray-400">Taxa da Plataforma (30%)</p>
-                    <p className="font-semibold text-orange-400">{formatCurrency(calculations.platformFee)}</p>
-                </div>
-                <hr className="border-white/10" />
-                <div className="flex justify-between items-center">
-                    <p className="font-bold">Retorno Total</p>
-                    <p className="font-bold text-orange-400 text-xl">{formatCurrency(calculations.totalReturn)}</p>
-                </div>
+         {/* Financials */}
+        <div className="bg-black rounded-xl p-4 text-sm space-y-3 border border-gray-800">
+            <div className="flex justify-between items-center">
+                <p className="text-gray-400">Valor do Investimento</p>
+                <p className="font-semibold text-base">{formatCurrency(investmentValue)}</p>
+            </div>
+            <hr className="border-white/10" />
+            <div className="flex justify-between items-center">
+                <p className="text-gray-400">Lucro Bruto da Operação</p>
+                <p className="font-semibold text-green-400">{formatCurrency(calculations.grossProfit)}</p>
+            </div>
+            <div className="flex justify-between items-center">
+                <p className="text-gray-400">Seu Lucro (70%)</p>
+                <p className="font-semibold text-green-400">{formatCurrency(calculations.userProfit)}</p>
+            </div>
+            <div className="flex justify-between items-center">
+                <p className="text-gray-400">Taxa da Plataforma (30%)</p>
+                <p className="font-semibold text-orange-400">{formatCurrency(calculations.platformFee)}</p>
+            </div>
+            <hr className="border-white/10" />
+            <div className="flex justify-between items-center">
+                <p className="font-bold">Retorno Total</p>
+                <p className="font-bold text-orange-400 text-xl">{formatCurrency(calculations.totalReturn)}</p>
             </div>
         </div>
 
