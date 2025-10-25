@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import type { User, Page, Financials, Operation, Withdrawal, InvestmentRescue } from './types';
 import LandingPage from './components/LandingPage';
@@ -169,28 +170,6 @@ const setStoredInvestmentRescues = (email: string, rescues: InvestmentRescue[]) 
     }
 };
 
-
-const getStoredWalletAccount = (): string | null => {
-    try {
-        return localStorage.getItem('wallet_account');
-    } catch (error) {
-        console.error("Failed to get wallet account from localStorage", error);
-        return null;
-    }
-};
-
-const setStoredWalletAccount = (account: string | null) => {
-    try {
-        if (account) {
-            localStorage.setItem('wallet_account', account);
-        } else {
-            localStorage.removeItem('wallet_account');
-        }
-    } catch (error) {
-        console.error("Failed to save wallet account to localStorage", error);
-    }
-};
-
 // --- End Helper Functions ---
 
 // --- Profit Calculation Helper ---
@@ -244,20 +223,19 @@ const App: React.FC = () => {
   const [walletAccount, setWalletAccount] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedAccount = getStoredWalletAccount();
-    if (storedAccount) {
-        setWalletAccount(storedAccount);
-    }
-
     if (window.ethereum) {
         const handleAccountsChanged = (accounts: string[]) => {
-            if (accounts.length > 0) {
-                const newAccount = accounts[0];
-                setWalletAccount(newAccount);
-                setStoredWalletAccount(newAccount);
-            } else {
-                setWalletAccount(null);
-                setStoredWalletAccount(null);
+            // Only update if a wallet is already connected in the app's state.
+            // This prevents the wallet from "auto-connecting" on page load
+            // if the user changes accounts in MetaMask.
+            if (walletAccount) { 
+                if (accounts.length > 0) {
+                    const newAccount = accounts[0];
+                    setWalletAccount(newAccount);
+                } else {
+                    // The user disconnected the site from MetaMask.
+                    setWalletAccount(null);
+                }
             }
         };
         window.ethereum.on('accountsChanged', handleAccountsChanged);
@@ -265,7 +243,7 @@ const App: React.FC = () => {
             window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
         };
     }
-  }, []);
+  }, [walletAccount]); // Add dependency to ensure the closure has the latest state
   
   useEffect(() => {
     if (user) {
@@ -521,13 +499,12 @@ const App: React.FC = () => {
             if (accounts.length > 0) {
                 const account = accounts[0];
                 setWalletAccount(account);
-                setStoredWalletAccount(account);
                 return { success: true };
             }
             return { success: false, error: "Nenhuma conta encontrada." };
         } catch (err: any) {
             if (err.code === 4001) {
-                return { success: false, error: "Conexão com a carteira rejeitada." };
+                return { success: false, error: "Conexão com a Metamask cancelada. Tente novamente." };
             }
             console.error(err);
             return { success: false, error: "Ocorreu um erro ao conectar a carteira." };
@@ -536,7 +513,6 @@ const App: React.FC = () => {
 
     const handleDisconnectWallet = useCallback(() => {
         setWalletAccount(null);
-        setStoredWalletAccount(null);
     }, []);
 
 
