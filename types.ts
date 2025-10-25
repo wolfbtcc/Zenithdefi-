@@ -7,7 +7,7 @@ export interface User {
   affiliateId?: string; // URL-friendly unique ID for referrals
 }
 
-export type Page = 'landing' | 'auth' | 'dashboard' | 'arbitrage' | 'deposit' | 'depositFlow' | 'withdraw' | 'rescue' | 'affiliate';
+export type Page = 'landing' | 'auth' | 'dashboard' | 'arbitrage' | 'deposit' | 'depositFlow' | 'withdraw' | 'rescue' | 'affiliate' | 'wallet';
 
 export interface Financials {
   balance: number;

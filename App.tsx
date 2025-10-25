@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useEffect } from 'react';
 import type { User, Page, Financials, Operation, Withdrawal, InvestmentRescue } from './types';
 import LandingPage from './components/LandingPage';
@@ -10,6 +11,7 @@ import DepositFlowPage from './components/DepositModal';
 import WithdrawPage from './components/WithdrawPage';
 import RescuePage from './components/RescuePage';
 import AffiliatePage from './components/AffiliatePage';
+import WalletPage from './components/WalletPage';
 
 
 // --- LocalStorage Helper Functions ---
@@ -167,6 +169,28 @@ const setStoredInvestmentRescues = (email: string, rescues: InvestmentRescue[]) 
     }
 };
 
+
+const getStoredWalletAccount = (): string | null => {
+    try {
+        return localStorage.getItem('wallet_account');
+    } catch (error) {
+        console.error("Failed to get wallet account from localStorage", error);
+        return null;
+    }
+};
+
+const setStoredWalletAccount = (account: string | null) => {
+    try {
+        if (account) {
+            localStorage.setItem('wallet_account', account);
+        } else {
+            localStorage.removeItem('wallet_account');
+        }
+    } catch (error) {
+        console.error("Failed to save wallet account to localStorage", error);
+    }
+};
+
 // --- End Helper Functions ---
 
 // --- Profit Calculation Helper ---
@@ -193,6 +217,12 @@ const calculateProfits = (operations: Operation[], registrationDateStr: string |
 };
 // --- End Profit Helper ---
 
+// Fix: Add a global declaration for window.ethereum to handle MetaMask integration.
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('landing');
@@ -211,6 +241,31 @@ const App: React.FC = () => {
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [investmentRescues, setInvestmentRescues] = useState<InvestmentRescue[]>([]);
   const [referredUsers, setReferredUsers] = useState<User[]>([]);
+  const [walletAccount, setWalletAccount] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedAccount = getStoredWalletAccount();
+    if (storedAccount) {
+        setWalletAccount(storedAccount);
+    }
+
+    if (window.ethereum) {
+        const handleAccountsChanged = (accounts: string[]) => {
+            if (accounts.length > 0) {
+                const newAccount = accounts[0];
+                setWalletAccount(newAccount);
+                setStoredWalletAccount(newAccount);
+            } else {
+                setWalletAccount(null);
+                setStoredWalletAccount(null);
+            }
+        };
+        window.ethereum.on('accountsChanged', handleAccountsChanged);
+        return () => {
+            window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+        };
+    }
+  }, []);
   
   useEffect(() => {
     if (user) {
@@ -455,6 +510,36 @@ const App: React.FC = () => {
     return true;
   }, [user, financials]);
 
+    const handleConnectWallet = useCallback(async (): Promise<{ success: boolean; error?: string }> => {
+        if (!window.ethereum) {
+            window.open("https://metamask.io/download/", "_blank");
+            return { success: false, error: "MetaMask não está instalado. Por favor, instale a extensão." };
+        }
+
+        try {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            if (accounts.length > 0) {
+                const account = accounts[0];
+                setWalletAccount(account);
+                setStoredWalletAccount(account);
+                return { success: true };
+            }
+            return { success: false, error: "Nenhuma conta encontrada." };
+        } catch (err: any) {
+            if (err.code === 4001) {
+                return { success: false, error: "Conexão com a carteira rejeitada." };
+            }
+            console.error(err);
+            return { success: false, error: "Ocorreu um erro ao conectar a carteira." };
+        }
+    }, []);
+
+    const handleDisconnectWallet = useCallback(() => {
+        setWalletAccount(null);
+        setStoredWalletAccount(null);
+    }, []);
+
+
   const navigateToAuth = useCallback((mode: 'login' | 'register') => {
     setAuthMode(mode);
     setCurrentPage('auth');
@@ -516,6 +601,10 @@ const App: React.FC = () => {
     setCurrentPage('depositFlow');
   }, []);
 
+  const navigateToWallet = useCallback(() => {
+    setCurrentPage('wallet');
+  }, []);
+
   const renderPage = () => {
     switch (currentPage) {
       case 'landing':
@@ -523,7 +612,7 @@ const App: React.FC = () => {
       case 'auth':
         return <AuthPage onLogin={handleLogin} initialMode={authMode} onNavigateBack={navigateToLanding} />;
       case 'dashboard':
-        return user ? <DashboardPage user={user} financials={financials} operationsHistory={operationsHistory} onLogout={handleLogout} onNavigateToArbitrage={navigateToArbitrage} onNavigateToDeposit={navigateToDeposit} onNavigateToWithdraw={navigateToWithdraw} onNavigateToAffiliate={navigateToAffiliate}/> : <LandingPage onNavigateToAuth={navigateToAuth} />;
+        return user ? <DashboardPage user={user} financials={financials} operationsHistory={operationsHistory} walletAccount={walletAccount} onLogout={handleLogout} onNavigateToArbitrage={navigateToArbitrage} onNavigateToDeposit={navigateToDeposit} onNavigateToWithdraw={navigateToWithdraw} onNavigateToAffiliate={navigateToAffiliate} onNavigateToWallet={navigateToWallet} /> : <LandingPage onNavigateToAuth={navigateToAuth} />;
       case 'arbitrage':
         return user ? <ArbitragePage user={user} balance={financials.balance} onNavigateToDashboard={navigateToDashboard} onExecuteOperation={handleExecuteOperation} /> : <LandingPage onNavigateToAuth={navigateToAuth} />;
       case 'deposit':
@@ -536,6 +625,8 @@ const App: React.FC = () => {
         return user ? <RescuePage financials={financials} rescues={investmentRescues} onNavigateToDashboard={navigateToDashboard} onRescueRequest={handleInvestmentRescueRequest} /> : <LandingPage onNavigateToAuth={navigateToAuth} />;
       case 'affiliate':
         return user ? <AffiliatePage user={user} financials={financials} referredUsers={referredUsers} onNavigateToDashboard={navigateToDashboard} /> : <LandingPage onNavigateToAuth={navigateToAuth} />;
+      case 'wallet':
+        return user ? <WalletPage account={walletAccount} onConnect={handleConnectWallet} onDisconnect={handleDisconnectWallet} onNavigateBack={navigateToDashboard} /> : <LandingPage onNavigateToAuth={navigateToAuth} />;
       default:
         return <LandingPage onNavigateToAuth={navigateToAuth} />;
     }

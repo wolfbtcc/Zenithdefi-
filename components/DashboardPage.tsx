@@ -10,11 +10,13 @@ interface DashboardPageProps {
   user: User;
   financials: Financials;
   operationsHistory: Operation[];
+  walletAccount: string | null;
   onLogout: () => void;
   onNavigateToArbitrage: () => void;
   onNavigateToDeposit: () => void;
   onNavigateToWithdraw: () => void;
   onNavigateToAffiliate: () => void;
+  onNavigateToWallet: () => void;
 }
 
 interface StatCardProps {
@@ -33,7 +35,7 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon }) => (
     </div>
 );
 
-const DashboardPage: React.FC<DashboardPageProps> = ({ user, financials, operationsHistory, onLogout, onNavigateToArbitrage, onNavigateToDeposit, onNavigateToWithdraw, onNavigateToAffiliate }) => {
+const DashboardPage: React.FC<DashboardPageProps> = ({ user, financials, operationsHistory, walletAccount, onLogout, onNavigateToArbitrage, onNavigateToDeposit, onNavigateToWithdraw, onNavigateToAffiliate, onNavigateToWallet }) => {
 
   const getGreetingText = () => {
     try {
@@ -69,7 +71,7 @@ const DashboardPage: React.FC<DashboardPageProps> = ({ user, financials, operati
       <header className="w-full container mx-auto px-4 py-6 flex justify-between items-center z-10">
         <h1 className="text-xl font-bold text-white">Zenith AI</h1>
         <div className="flex items-center gap-4">
-          <ConnectWalletButton />
+          <ConnectWalletButton account={walletAccount} onClick={onNavigateToWallet} />
           <button onClick={onLogout} className="text-sm border border-gray-700 rounded-full px-4 py-1.5 hover:bg-gray-800 transition-colors">
             Sair
           </button>
