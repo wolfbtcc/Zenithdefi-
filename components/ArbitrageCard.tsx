@@ -93,23 +93,26 @@ const ArbitrageCard: React.FC<ArbitrageCardProps> = ({
     setAnimationKey(prev => prev + 1); // Trigger animation
   }, [pairs, exchanges, minPercent, maxPercent]);
 
-  // Main timer for new opportunities
+  // Main timer for new opportunities and countdown display.
+  // This single effect manages the ticking countdown and the refresh logic.
   useEffect(() => {
-    generateNewOpportunity(); // Initial opportunity
-    const interval = setInterval(() => {
-      generateNewOpportunity();
-      setCountdown(intervalSeconds);
-      setIsExecuteEnabled(false); // Disable button on new opportunity
-    }, intervalSeconds * 1000);
-    return () => clearInterval(interval);
+    // Generate the very first opportunity immediately on mount
+    generateNewOpportunity();
+
+    const timer = setInterval(() => {
+      setCountdown(prevCountdown => {
+        if (prevCountdown <= 1) {
+          generateNewOpportunity();
+          setIsExecuteEnabled(false);
+          return intervalSeconds;
+        }
+        return prevCountdown - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
   }, [generateNewOpportunity, intervalSeconds]);
 
-  // Timer for countdown display
-  useEffect(() => {
-    if (countdown <= 0) return;
-    const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-    return () => clearTimeout(timer);
-  }, [countdown]);
 
   const handleUseInvestment = () => {
     setIsExecuteEnabled(true);
